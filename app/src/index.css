@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 45 100% 97%;
+    --foreground: 15 25% 22%;
+    --card: 0 0% 100%;
+    --card-foreground: 15 25% 22%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 15 25% 22%;
+    --primary: 42 100% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 42 95% 42%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 40 50% 90%;
+    --muted-foreground: 15 20% 40%;
+    --accent: 40 50% 88%;
+    --accent-foreground: 15 25% 22%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 40 30% 85%;
+    --input: 40 30% 90%;
+    --ring: 42 100% 48%;
+    --radius: 0.625rem;
+    --sidebar-background: 45 100% 97%;
+    --sidebar-foreground: 15 25% 22%;
+    --sidebar-primary: 42 100% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 40 50% 88%;
+    --sidebar-accent-foreground: 15 25% 22%;
+    --sidebar-border: 40 30% 85%;
+    --sidebar-ring: 42 100% 48%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-imperial-cream text-imperial-brown font-body antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gold-gradient text-white font-semibold px-6 py-3 rounded-xl 
+           shadow-soft hover:shadow-glow transition-all duration-300 
+           hover:-translate-y-0.5 active:translate-y-0;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-imperial-brown font-semibold px-6 py-3 rounded-xl 
+           border-2 border-imperial-gold shadow-soft hover:shadow-glow 
+           transition-all duration-300 hover:-translate-y-0.5;
+  }
+  
+  .card-luxury {
+    @apply bg-white rounded-2xl shadow-card hover:shadow-luxury 
+           transition-all duration-300 hover:-translate-y-1 overflow-hidden;
+  }
+  
+  .glass {
+    @apply bg-white/80 backdrop-blur-md border border-white/20;
+  }
+  
+  .text-gradient {
+    @apply bg-gold-gradient bg-clip-text text-transparent;
+  }
+  
+  .section-padding {
+    @apply px-4 sm:px-6 lg:px-8 xl:px-16 2xl:px-24;
+  }
+  
+  .input-luxury {
+    @apply w-full px-4 py-3 rounded-xl border border-imperial-soft 
+           bg-white focus:border-imperial-gold focus:ring-2 
+           focus:ring-imperial-gold/20 transition-all duration-300
+           placeholder:text-imperial-brown/50;
+  }
+  
+  .badge-gold {
+    @apply inline-flex items-center px-3 py-1 rounded-full 
+           bg-gold-gradient text-white text-sm font-medium;
+  }
+  
+  .nav-link {
+    @apply relative text-imperial-brown hover:text-imperial-gold 
+           transition-colors duration-300 after:absolute after:bottom-0 
+           after:left-0 after:h-0.5 after:w-0 after:bg-imperial-gold 
+           after:transition-all after:duration-300 hover:after:w-full;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .animate-delay-100 {
+    animation-delay: 100ms;
+  }
+  
+  .animate-delay-200 {
+    animation-delay: 200ms;
+  }
+  
+  .animate-delay-300 {
+    animation-delay: 300ms;
+  }
+  
+  .animate-delay-400 {
+    animation-delay: 400ms;
+  }
+  
+  .animate-delay-500 {
+    animation-delay: 500ms;
+  }
+}
