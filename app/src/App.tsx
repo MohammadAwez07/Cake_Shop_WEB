@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
+import { Toaster } from 'sonner';
 import { AuthProvider } from '@/context/AuthContext';
 import { CartProvider } from '@/context/CartContext';
 import Navbar from '@/components/Navbar';
@@ -94,6 +95,7 @@ function App() {
               </AnimatePresence>
             </main>
             <Footer />
+            <Toaster position="top-right" richColors />
           </div>
         </Router>
       </CartProvider>

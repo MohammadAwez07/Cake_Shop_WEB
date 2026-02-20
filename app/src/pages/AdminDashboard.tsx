@@ -11,9 +11,11 @@ import {
   Tooltip, ResponsiveContainer, PieChart as RePieChart, 
   Pie, Cell
 } from 'recharts';
-import type { Product, Order, DashboardStats } from '@/types';
+import type { Product, Order, DashboardStats, ProductRequest } from '@/types';
 import { useAuth } from '@/context/AuthContext';
 import apiService from '@/services/api';
+import ProductFormModal from '@/components/ProductFormModal';
+import { toast } from 'sonner';
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -24,6 +26,9 @@ const AdminDashboard: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'orders'>('overview');
+  const [categories, setCategories] = useState<string[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     if (!isAdmin) {
@@ -33,16 +38,19 @@ const AdminDashboard: React.FC = () => {
 
     const fetchData = async () => {
       try {
-        const [statsData, ordersData, productsData] = await Promise.all([
+        const [statsData, ordersData, productsData, categoriesData] = await Promise.all([
           apiService.getDashboardStats(),
           apiService.getAllOrders(),
           apiService.getProducts('', '', 'name', 'asc', 0, 100),
+          apiService.getCategories(),
         ]);
         setStats(statsData);
         setOrders(ordersData);
         setProducts(productsData.content);
+        setCategories(categoriesData);
       } catch (error) {
         console.error('Failed to fetch dashboard data:', error);
+        toast.error('Failed to load dashboard data');
       } finally {
         setIsLoading(false);
       }
@@ -57,8 +65,44 @@ const AdminDashboard: React.FC = () => {
     try {
       await apiService.deleteProduct(id);
       setProducts(products.filter(p => p.id !== id));
+      toast.success('Product deleted successfully');
     } catch (error) {
       console.error('Failed to delete product:', error);
+      toast.error('Failed to delete product');
+    }
+  };
+
+  const handleAddProduct = () => {
+    setEditingProduct(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEditProduct = (product: Product) => {
+    setEditingProduct(product);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingProduct(null);
+  };
+
+  const handleSubmitProduct = async (data: ProductRequest) => {
+    try {
+      if (editingProduct) {
+        // Update existing product
+        const updatedProduct = await apiService.updateProduct(editingProduct.id, data);
+        setProducts(products.map(p => p.id === editingProduct.id ? updatedProduct : p));
+        toast.success('Product updated successfully');
+      } else {
+        // Create new product
+        const newProduct = await apiService.createProduct(data);
+        setProducts([newProduct, ...products]);
+        toast.success('Product created successfully');
+      }
+    } catch (error: any) {
+      console.error('Failed to save product:', error);
+      throw error; // Re-throw to be handled by modal
     }
   };
 
@@ -331,7 +375,8 @@ const AdminDashboard: React.FC = () => {
                 All Products
               </h2>
               <button
-                onClick={() => alert('Add product feature coming soon!')}
+                onClick={handleAddProduct}
+                data-testid="add-product-button"
                 className="flex items-center gap-2 px-4 py-2 rounded-xl bg-imperial-gold text-white font-medium hover:bg-imperial-dark transition-colors"
               >
                 <Plus className="w-5 h-5" />
@@ -380,13 +425,15 @@ const AdminDashboard: React.FC = () => {
                         <td className="py-4 px-6">
                           <div className="flex gap-2">
                             <button
-                              onClick={() => alert('Edit feature coming soon!')}
+                              onClick={() => handleEditProduct(product)}
+                              data-testid={`edit-product-${product.id}`}
                               className="w-8 h-8 rounded-lg bg-imperial-soft/50 flex items-center justify-center hover:bg-imperial-gold hover:text-white transition-colors"
                             >
                               <Edit2 className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() => handleDeleteProduct(product.id)}
+                              data-testid={`delete-product-${product.id}`}
                               className="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 transition-colors"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -460,6 +507,15 @@ const AdminDashboard: React.FC = () => {
           </motion.div>
         )}
       </div>
+
+      {/* Product Form Modal */}
+      <ProductFormModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleSubmitProduct}
+        product={editingProduct}
+        categories={categories}
+      />
     </div>
   );
 };
